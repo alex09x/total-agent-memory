@@ -1,0 +1,111 @@
+name: review install check (15.0.0)
+
+# JOSS review (openjournals/joss-reviews#11457): install 15.0.0 on platforms the reviewer has no
+# machine for, then load a small synthetic dataset through MCP stdio and score its gold queries.
+
+on:
+  push:
+    branches: [review/install-check-15.0.0]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  TAM_VERSION: "15.0.0"
+
+jobs:
+  windows-pip:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: pip install from PyPI
+        shell: bash
+        run: |
+          python -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/Scripts/python.exe" -m pip install "total-agent-memory==$TAM_VERSION"
+          "$RUNNER_TEMP/venv/Scripts/tam.exe" --version
+      - name: dataset probe over MCP stdio
+        shell: bash
+        run: |
+          export TAM_MEMORY_DIR="$(cygpath -m "$RUNNER_TEMP")/store-pip"
+          CMD="$(cygpath -m "$RUNNER_TEMP")/venv/Scripts/total-agent-memory.exe"
+          python -X utf8 -I review-probe/run_dataset.py --dataset review-probe --out windows-pip.json --label windows-pip --cmd "$CMD"
+          python -X utf8 -c "import json;d=json.load(open('windows-pip.json'));print('RESULT',d['server'],'tools',d['tools'],'passed',d['passed'],'/',d['queries'],'identical',d['identical_across_restarts'],'recall_p50_ms',d['recall_ms_p50'],'failed',[f['id'] for f in d['failed']])"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-pip
+          path: windows-pip.json*
+
+  windows-install-ps1:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install.ps1 as documented
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File .\install.ps1 -Ide claude-code
+      - name: what the installer wrote
+        if: always()
+        shell: bash
+        run: |
+          python -X utf8 - <<'PY'
+          import json, os, pathlib
+          home = pathlib.Path(os.environ["USERPROFILE"])
+          for name in (".claude.json", ".claude/settings.json"):
+              p = home / name
+              print("==", p, "exists" if p.exists() else "MISSING")
+              if p.exists():
+                  d = json.loads(p.read_text(encoding="utf-8"))
+                  print(json.dumps({k: d[k] for k in ("mcpServers", "hooks") if k in d}, indent=1)[:3000])
+          PY
+          schtasks //Query //FO LIST 2>/dev/null | grep -i -E "TaskName.*(tam|memory)" || echo "no scheduled tasks matched"
+      - name: dataset probe with the command the installer registered
+        shell: bash
+        run: |
+          CMD="$(python -X utf8 -c "import json,os,pathlib,shlex;s=json.loads((pathlib.Path(os.environ['USERPROFILE'])/'.claude.json').read_text(encoding='utf-8'))['mcpServers'];v=next(iter(s.values()));print(' '.join(shlex.quote(x.replace(chr(92),'/')) for x in [v['command'],*v.get('args',[])]))")"
+          echo "registered command: $CMD"
+          export TAM_MEMORY_DIR="$(cygpath -m "$RUNNER_TEMP")/store-ps1"
+          python -X utf8 -I review-probe/run_dataset.py --dataset review-probe --out windows-install-ps1.json --label windows-install-ps1 --cmd "$CMD"
+          python -X utf8 -c "import json;d=json.load(open('windows-install-ps1.json'));print('RESULT',d['server'],'tools',d['tools'],'passed',d['passed'],'/',d['queries'],'identical',d['identical_across_restarts'],'recall_p50_ms',d['recall_ms_p50'],'failed',[f['id'] for f in d['failed']])"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-install-ps1
+          path: windows-install-ps1.json*
+
+  homebrew:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Homebrew on PATH (Linux)
+        if: runner.os == 'Linux'
+        run: echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
+      - name: brew install as documented
+        run: |
+          brew --version
+          brew install vbcherepanov/tap/total-memory
+          "$(brew --prefix)/bin/tam" --version
+      - name: dataset probe over MCP stdio
+        run: |
+          export TAM_MEMORY_DIR="$RUNNER_TEMP/store-brew"
+          python3 -I review-probe/run_dataset.py --dataset review-probe --out "brew-${{ matrix.os }}.json" --label "brew-${{ matrix.os }}" --cmd "$(brew --prefix)/bin/total-agent-memory"
+          python3 -c "import json;d=json.load(open('brew-${{ matrix.os }}.json'));print('RESULT',d['server'],'tools',d['tools'],'passed',d['passed'],'/',d['queries'],'identical',d['identical_across_restarts'],'recall_p50_ms',d['recall_ms_p50'],'failed',[f['id'] for f in d['failed']])"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: brew-${{ matrix.os }}
+          path: brew-*.json*

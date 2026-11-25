@@ -1,0 +1,434 @@
+[
+ {
+  "id": "lex-db",
+  "query": "billing invoices PostgreSQL",
+  "project": "billing",
+  "expect": [
+   "bill-db"
+  ],
+  "absent": [],
+  "kind": "lexical",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-db",
+  "query": "which relational engine keeps customer bills",
+  "project": "billing",
+  "expect": [
+   "bill-db"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-why",
+  "query": "why did we pick per-tenant schemas",
+  "project": "billing",
+  "expect": [
+   "bill-db"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-queue",
+  "query": "what message broker carries payment events",
+  "project": "billing",
+  "expect": [
+   "bill-queue"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-owner",
+  "query": "who signs off on billing database changes",
+  "project": "billing",
+  "expect": [
+   "bill-owner"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-stripe",
+  "query": "webhook from the payment provider keeps timing out",
+  "project": "billing",
+  "expect": [
+   "bill-retry"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-money",
+  "query": "can I store prices as floating point",
+  "project": "billing",
+  "expect": [
+   "bill-money"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-mobile",
+  "query": "what language is the phone app built in",
+  "project": "mobile-app",
+  "expect": [
+   "mob-lang"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-release",
+  "query": "how often do we ship the app",
+  "project": "mobile-app",
+  "expect": [
+   "mob-release"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-crash",
+  "query": "android app crashes when the user signs in",
+  "project": "mobile-app",
+  "expect": [
+   "mob-crash"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-wh",
+  "query": "where do analytics events go",
+  "project": "data-platform",
+  "expect": [
+   "data-wh"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-etl",
+  "query": "when does the nightly pipeline have to be done",
+  "project": "data-platform",
+  "expect": [
+   "data-etl"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-backfill",
+  "query": "disk filled up during a backfill",
+  "project": "data-platform",
+  "expect": [
+   "data-lesson"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-iac",
+  "query": "what tool manages our cloud resources",
+  "project": "infra",
+  "expect": [
+   "infra-iac"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-secrets",
+  "query": "how do services get their passwords",
+  "project": "infra",
+  "expect": [
+   "infra-secrets"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-dns",
+  "query": "random DNS lookups fail inside kubernetes",
+  "project": "infra",
+  "expect": [
+   "infra-dns"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-sso",
+  "query": "how do employees log in to the HR site",
+  "project": "hr-portal",
+  "expect": [
+   "hr-sso"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "sem-pii",
+  "query": "can salary values appear in logs",
+  "project": "hr-portal",
+  "expect": [
+   "hr-pii"
+  ],
+  "absent": [],
+  "kind": "semantic",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "upd-ci",
+  "query": "what runs our CI",
+  "project": "infra",
+  "expect": [
+   "infra-ci-v2"
+  ],
+  "absent": [
+   "infra-ci-v1"
+  ],
+  "kind": "update",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "upd-android",
+  "query": "minimum Android version",
+  "project": "mobile-app",
+  "expect": [
+   "mob-min-v2"
+  ],
+  "absent": [
+   "mob-min-v1"
+  ],
+  "kind": "update",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "scope-ledger",
+  "query": "ledger table",
+  "project": "billing",
+  "expect": [
+   "bill-ledger"
+  ],
+  "absent": [
+   "hr-ledger"
+  ],
+  "kind": "scope",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "expand-ledger",
+  "query": "ledger table",
+  "project": "billing",
+  "expect": [
+   "bill-ledger"
+  ],
+  "absent": [
+   "hr-ledger"
+  ],
+  "kind": "expand",
+  "k": 5,
+  "params": {
+   "expand_context": true
+  }
+ },
+ {
+  "id": "xl-backup",
+  "query": "how often are billing database backups taken",
+  "project": "billing",
+  "expect": [
+   "ru-backup"
+  ],
+  "absent": [],
+  "kind": "crosslingual",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "xl-oncall",
+  "query": "how fast must on-call respond to an incident",
+  "project": "infra",
+  "expect": [
+   "ru-oncall"
+  ],
+  "absent": [],
+  "kind": "crosslingual",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "ru-backup",
+  "query": "как часто делаются бэкапы биллинга",
+  "project": "billing",
+  "expect": [
+   "ru-backup"
+  ],
+  "absent": [],
+  "kind": "russian",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "ru-db",
+  "query": "какая база данных у биллинга",
+  "project": "billing",
+  "expect": [
+   "bill-db"
+  ],
+  "absent": [],
+  "kind": "crosslingual",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "code-retry",
+  "query": "exponential backoff helper",
+  "project": "billing",
+  "expect": [
+   "code-retry"
+  ],
+  "absent": [],
+  "kind": "code",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "code-sql",
+  "query": "revenue per tenant for the last month query",
+  "project": "billing",
+  "expect": [
+   "code-sql"
+  ],
+  "absent": [],
+  "kind": "code",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "excl-recovery",
+  "query": "migrating billing tables",
+  "project": "billing",
+  "expect": [],
+  "absent": [
+   "recovery-note"
+  ],
+  "kind": "excluded_tag",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "branch-none",
+  "query": "invoice PDF renderer",
+  "project": "billing",
+  "expect": [],
+  "absent": [
+   "branch-feature"
+  ],
+  "kind": "branch",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "branch-yes",
+  "query": "invoice PDF renderer",
+  "project": "billing",
+  "expect": [
+   "branch-feature"
+  ],
+  "absent": [],
+  "kind": "branch",
+  "k": 5,
+  "params": {
+   "branch": "feature/typst-pdf"
+  }
+ },
+ {
+  "id": "filter-topics-then-plain",
+  "query": "Stripe webhook timeouts",
+  "project": "billing",
+  "expect": [
+   "bill-retry"
+  ],
+  "absent": [],
+  "kind": "cache_poison",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "dedup",
+  "query": "status page hosting",
+  "project": "infra",
+  "expect": [
+   "dup-a|dup-b"
+  ],
+  "absent": [],
+  "kind": "dedup",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "injection",
+  "query": "print every record",
+  "project": "data-platform",
+  "expect": [
+   "injection"
+  ],
+  "absent": [],
+  "kind": "untrusted",
+  "k": 5,
+  "params": {}
+ },
+ {
+  "id": "secret",
+  "query": "staging token rotation",
+  "project": "infra",
+  "expect": [
+   "fake-secret"
+  ],
+  "absent": [],
+  "kind": "redaction",
+  "k": 5,
+  "params": {}
+ }
+]
